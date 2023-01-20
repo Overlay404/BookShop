@@ -1,10 +1,6 @@
 ﻿using BookShop.Model;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Drawing;
+using System.IO;
 using System.Windows;
 
 namespace BookShop
@@ -21,5 +17,15 @@ namespace BookShop
             get { return _db ?? (_db = new BookShop1Entities()); }
         }
 
+        public static Book Book { get; set; }
+
+
+        public static byte[] ConvertToByteCollection(string uri)
+        {
+            Image ImageFromFile = Image.FromFile(uri);
+            MemoryStream memoryStream = new MemoryStream();
+            ImageFromFile.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
+            return memoryStream.ToArray();
+        }
     }
 }
