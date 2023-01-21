@@ -7,6 +7,13 @@
         mc:Ignorable="d"
         Title="EditWindow" Height="450" Width="800">
     <Grid>
-        <Image x:Name="ImageUser"/>
+        
+        <ContentControl Content="{Binding Books}" VerticalAlignment="Top">
+            <ContentControl.ContentTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Article}"/>
+                </DataTemplate>
+            </ContentControl.ContentTemplate>
+        </ContentControl>
     </Grid>
 </Window>

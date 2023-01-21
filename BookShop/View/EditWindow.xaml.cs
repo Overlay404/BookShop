@@ -1,5 +1,7 @@
-﻿using System;
+﻿using BookShop.Model;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,8 +19,11 @@ namespace BookShop.View
     /// <summary>
     /// Логика взаимодействия для EditWindow.xaml
     /// </summary>
+
     public partial class EditWindow : Window
     {
+        
+
         public EditWindow()
         {
             InitializeComponent();

@@ -3,45 +3,69 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:BookShop"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
-        Title="Каталог книг" Height="450" Width="700"
+        Title="Каталог книг" Height="450" Width="800"
         ResizeMode="NoResize"
-        DataContext="{Binding RelativeSource={RelativeSource Self}}">
+        DataContext="{Binding RelativeSource={RelativeSource Self}}" Closed="Window_Closed">
     <Grid>
-        <fa:ImageAwesome Icon="PencilSquare" 
-                         Width="30"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="25*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" MinWidth="500"/>
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition x:Name="ColumnContentControl"
+                              Width="*"                  
+                              MinWidth="200" 
+                              MaxWidth="280"/>
+        </Grid.ColumnDefinitions>
+        <fa:ImageAwesome x:Name="AcceptImage"
+                         Icon="CheckSquareOutline"
+                         Width="20"
                          VerticalAlignment="Top"
                          HorizontalAlignment="Right"
-                         Margin="0 4 0 0"
-                         MouseUp="ImageAwesome_MouseUp"/>
+                         Margin="0 10 40 0"
+                         MouseUp="AcceptImage_MouseUp"
+                         Grid.ColumnSpan="3"
+                         Visibility="Collapsed"/>
+        <fa:ImageAwesome Icon="PlusSquareOutline" 
+                         Width="20"
+                         VerticalAlignment="Top"
+                         HorizontalAlignment="Right"
+                         Margin="0 10 10 0"
+                         MouseUp="ImageAwesome_MouseUp"
+                         Grid.ColumnSpan="3"/>
         <TextBlock Text="Католог"
                    HorizontalAlignment="Center"
                    FontSize="20" 
-                   FontWeight="Bold"/>
+                   FontWeight="Bold"
+                   Grid.ColumnSpan="3"/>
         <ListView ItemsSource="{Binding Books}"
                   x:Name="ListBooks"
                   HorizontalAlignment="Center"
                   BorderBrush="White"
-                  Margin="0 30 0 0">
+                  IsSynchronizedWithCurrentItem="true"
+                  Grid.Row="1"
+                  SelectionChanged="ListBooks_SelectionChanged">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
                         <StackPanel Margin="10">
                             <Image x:Name="ImageBook"
                                    Source="{Binding ImageSource}"
-                                   Width="150"
+                                   Width="130"
                                    Height="100"/>
                         </StackPanel>
                         <Border Padding="10">
-                        <StackPanel Margin="10 0 0 0"
+                            <StackPanel Margin="10 0 0 0"
                                     Width="180">
-                            <TextBlock Text="{Binding Name}"
+                                <TextBlock Text="{Binding Name}"
                                        FontSize="14" 
                                        FontWeight="Bold" 
                                        Margin="0 10"/>
-                            <TextBlock Text="{Binding Description}"
+                                <TextBlock Text="{Binding Description}"
                                        Margin="0 0 0 5"
                                        TextWrapping="Wrap"/>
                                 <StackPanel Orientation="Horizontal">
@@ -69,5 +93,75 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+        <fa:ImageAwesome Icon="Close" 
+                         Width="10"
+                         Grid.Column="3"
+                         Grid.Row="2"
+                         VerticalAlignment="Top"
+                         HorizontalAlignment="Right"
+                         MouseDown="ImageAwesome_MouseDown"
+                         Margin="5"/>
+        <StackPanel Grid.Column="3"
+                    Grid.Row="1">
+            <ScrollViewer MaxHeight="380">
+                <StackPanel>
+                    <ContentControl Content="{Binding Books}"
+                        Margin="10 30 0 0">
+                        <ContentControl.ContentTemplate>
+                            <DataTemplate>
+                                <Border>
+                                    <StackPanel>
+                                        <Image x:Name="PictureBook"
+                                               Width="200" Height="150"
+                                               Margin="10"
+                                               Source="{Binding ImageSource}"
+                                               MouseUp="PictureBook_MouseUp"/>
+                                        <TextBlock Text="Артикл товара: "/>
+                                        <TextBox Text="{Binding Article}"
+                                         TextWrapping="Wrap"
+                                         Margin="10 5 10 10"/>
+                                        <TextBlock Text="Наименование товара: "/>
+                                        <TextBox Text="{Binding Name}"
+                                         TextWrapping="Wrap"
+                                         Margin="10 5 10 10"/>
+                                        <TextBlock Text="Описание товара: "/>
+                                        <TextBox Text="{Binding Description}"
+                                         TextWrapping="Wrap"
+                                         Margin="10 5 10 10"/>
+                                        <TextBlock Text="Цена товара: "/>
+                                        <TextBox Text="{Binding Cost}"
+                                         TextWrapping="Wrap"
+                                         Margin="10 5 10 10"/>
+                                        <TextBlock Text="Размер скидки: "/>
+                                        <TextBox Text="{Binding Discount}"
+                                         TextWrapping="Wrap"
+                                         Margin="10 5 10 10"/>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ContentControl.ContentTemplate>
+                    </ContentControl>
+
+                    <TextBlock Text="Поставщик: "
+                       Margin="10 0 0 0"/>
+                    <ComboBox x:Name="ManufacturersComboBox"
+                      ItemsSource="{Binding Manufacturers}"
+                      VerticalAlignment="Bottom"
+                      Margin="20 5 10 10"
+                      SelectionChanged="ComboBox_SelectionChanged">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+            </ScrollViewer>
+        </StackPanel>
+
+        <GridSplitter HorizontalAlignment="Center"
+                      Width="5"
+                      Grid.Column="1"
+                      ShowsPreview="False" Grid.Row="1"/>
     </Grid>
 </Window>
