@@ -48,7 +48,7 @@ namespace BookShop.View
 
         void UpdateCollectionBooks()
         {
-            var position = ListBooks.SelectedIndex;
+            var position = ListBooks.SelectedIndex == -1 ? 0 : ListBooks.SelectedIndex;
             Books = new ObservableCollection<Book>(App.db.Book);
             Manufacturers = new ObservableCollection<Manufacturer>(App.db.Manufacturer);
             ListBooks.SelectedIndex = position;
@@ -59,6 +59,7 @@ namespace BookShop.View
             ColumnContentControl.MinWidth = minWidht;
             ColumnContentControl.Width = new GridLength(widht);
         }
+
         private static void SaveChangesDataBase()
         {
             App.db.SaveChanges();
@@ -80,6 +81,7 @@ namespace BookShop.View
         {
             AcceptImage.Visibility = Visibility.Collapsed;
             App.db.Book.Add(Books.LastOrDefault());
+            App.db.SaveChanges();
         }
 
 
@@ -92,6 +94,7 @@ namespace BookShop.View
                 if (answerMessageBox == MessageBoxResult.Yes)
                 {
                     SaveNewBook();
+                    UpdateCollectionBooks();
                 }
                 else if (answerMessageBox == MessageBoxResult.No)
                 {
@@ -101,10 +104,6 @@ namespace BookShop.View
             }
 
             if (ManufacturersComboBox == null || ListBooks == null) return;
-
-            ManufacturersComboBox.SelectedIndex = -1;
-
-            SaveChangesDataBase();
 
             App.Book = ListBooks.SelectedItem as Book;
 
@@ -119,6 +118,7 @@ namespace BookShop.View
         private void AcceptImage_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             SaveNewBook();
+            UpdateCollectionBooks();
         }
 
         private void Window_Closed(object sender, System.EventArgs e)
@@ -129,20 +129,54 @@ namespace BookShop.View
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             App.Book.ManufacturerId = (ManufacturersComboBox.SelectedItem as Manufacturer).Id;
+            SaveChangesDataBase();
+
+            if (AcceptImage.Visibility == Visibility.Visible) return;
+            UpdateCollectionBooks();
         }
 
         private void PictureBook_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             OpenFileDialog openFile = new OpenFileDialog()
             {
-                Filter = "All Files (*.*)|*.*",
+                Filter = "All Files (*.*)|*.*"
             };
+
             if (openFile.ShowDialog().GetValueOrDefault())
             {
                 BitmapFrame.Create(new MemoryStream(File.ReadAllBytes(openFile.FileName)), BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
                 App.Book.Photo = File.ReadAllBytes(openFile.FileName);
             }
+
+            if (AcceptImage.Visibility == Visibility.Visible) return;
             UpdateCollectionBooks();
         }
+
+        private void ImageAwesome_MouseUp_1(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if(ListBooks.SelectedItem == null)
+            {
+                MessageBox.Show("Нет выбранного элемента");
+                return;
+            }
+
+            var answerMessageBox = MessageBox.Show($"Подтвердить удаление {(ListBooks.SelectedItem as Book).Name}", "Подтверждение", MessageBoxButton.YesNo);
+            if (answerMessageBox == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    App.db.Book.Remove(ListBooks.SelectedItem as Book);
+                }
+                catch
+                {
+                    AcceptImage.Visibility = Visibility.Collapsed;
+                    Books.RemoveAt(ListBooks.Items.Count - 1);
+                }
+                SaveChangesDataBase();
+                UpdateCollectionBooks();
+            }
+        }
+
+
     }
 }
